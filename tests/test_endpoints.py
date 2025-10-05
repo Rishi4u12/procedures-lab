@@ -38,3 +38,13 @@ def test_vulnerable_echo_reflection(client):
     payload = "<b>raw</b>"
     rv = client.get("/vulnerable_echo", query_string={"name": payload})
     assert payload in rv.get_data(as_text=True)
+
+def test_vulnerable_echo_fixed(client):
+    # The vulnerable_echo endpoint mitigation escapes user input
+    payload = "<script>alert('x')</script>"
+    rv = client.get("/vulnerable_echo", query_string={"name": payload})
+    body = rv.get_data(as_text=True)
+    # The raw payload must not appear (it should be escaped)
+    assert payload not in body
+    # Escaped characters should appear
+    assert "&lt;script&gt;" in body or "&lt;/script&gt;" in body

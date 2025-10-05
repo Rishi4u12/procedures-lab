@@ -2,6 +2,7 @@
 Utility procedures student implement and test.
 """
 
+# This import is important later to understand what's going on
 from typing import Dict, Optional
 
 def add(a: float, b: float) -> float:
@@ -18,7 +19,11 @@ def fib(n: int) -> int:
     # TODO: implement
     raise NotImplementedError
 
-# Simple "database"
+"""
+Simple "database"
+Hi again! We imported `typing.Dict` because it's more readable type wise.
+That is, so you can tell what we types of variables (string, integer, etc.) we want to use in our dictionary.
+"""
 _DB: Dict[str, Dict] = {}
 
 def create_item(key: str, value: Dict) -> None:

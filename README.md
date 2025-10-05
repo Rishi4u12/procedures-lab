@@ -12,7 +12,7 @@ Work incrementally. After each small task, run the tests and try the server form
 1. Create the virtual environment and install dependencies:
     ```bash
     python -m venv venv
-    source venv/bin/activate # on Windows: venv\Scripts\activate
+    source venv/bin/activate
     pip install -r requirements.txt
     ```
 2. Run the test suite (it will fail initially -- that's expected):
@@ -125,14 +125,17 @@ This is a very short section. You will discover a vulnerable endpoint and fix it
     - When you submit this assignment, include a little section explaining:
       - *What you sent*;
       - *What happened in the browser*;
-      - *why the server was vulnerable*;
+      - *Why the server was vulnerable*;
     - You just hacked your own website!
 
 13. **Mitigation**
     - Replace the vulnerable echo with a safe version: use `markupsafe.escape(name)` (or render via a template that escapes by default so user input is HTML-escaped before insertion).
     - Add a `Content-Security-Policy` header to the response(s) that disallows inline scripts (for example: `Content-Security-Policy: default-src 'self'; script-src 'self'`).
   
-14. **Write a test** asserting the raw `"<script>...</script>"` string no longer appears in the body returned by `/vulnerable_echo`. Add that test to `tests/test_endpoint.py` (look for `test_vulnerable_echo_reflection` and create a "fixed" version).
+14. **Run a test** asserting the raw `"<script>...</script>"` string no longer appears in the body returned by `/vulnerable_echo`.
+    - Run `pytest -q`. If you made the right fix, then:
+      - `test_vulnerable_echo_reflection` should **FAIL**
+      - `test_vulnerable_echo_fix` should **PASS**
 
 15. Run `pytest -q` and ensure all tests pass.
 
@@ -141,8 +144,8 @@ This is a very short section. You will discover a vulnerable endpoint and fix it
 
 Submit your:
 
-1. Implements `app/utils.py` and updates `app/server.py` (the `POST /items` endpoint and XSS mitigation).
-2. All tets in `tests/` pass (`pytest -q`).
+1. Implements `app/utils.py` and updates `app/server.py` (XSS mitigation).
+2. All tests in `tests/` pass (`pytest -q`).
 3. A small section explaining the exploit (mentioned in Part D).
 
 ### Checklist
@@ -150,5 +153,5 @@ Submit your:
 - [ ] `pytest -q` shows all tests passing
 - [ ] Server starts and the forms work at `http://127.0.0.1:8000/`
 - [ ] You can `PUT/GET/PATCH/DELETE` items and `POST /items` works
-- [ ] Security report (Part D) is present and explaisn the XSS and mitigations
+- [ ] Security report (Part D) is present and explains the XSS and mitigations
 - [ ] `/vulnerable_echo` no longer reflects raw `<script>` tags (verified by `pytest -q`)
