@@ -1,5 +1,7 @@
 # Procedure Lab
 
+![pytest](https://github.com/the-remakers/procedures-lab/actions/workflows/pytest.yml/badge.svg)
+
 Our goal here is to implement small, testable procedures, wire them into a local Flask web server, write/verify tests, then discover and fix a simple reflected XSS vulnerability (Yes! You are hacking your own site!). 
 
 This lab teaches *how to design, call, and test procedures* and gives a short, practical security lesson about escaping
@@ -19,8 +21,38 @@ Work incrementally. After each small task, run the tests and try the server form
     ```bash
     pytest -q
     ```
+    ```bash
+    (venv) ➜  procedures-lab (master) ✗ pytest -v --tb=no
+    ============================================================================================ test session starts ============================================================================================
+    platform linux -- Python 3.13.7, pytest-7.4.2, pluggy-1.6.0 -- /home/mataiodoxion/School/CSP/procedures-lab/venv/bin/python
+    cachedir: .pytest_cache
+    rootdir: /home/mataiodoxion/School/CSP/procedures-lab
+    configfile: pytest.ini
+    collected 8 items                                                                                                                                                                                           
 
-3. Start the server for testing:
+    tests/test_endpoints.py::test_add_endpoint FAILED                                                                                                                                                     [ 12%]
+    tests/test_endpoints.py::test_fib_endpoint FAILED                                                                                                                                                     [ 25%]
+    tests/test_endpoints.py::test_item_crud FAILED                                                                                                                                                        [ 37%]
+    tests/test_endpoints.py::test_vulnerable_echo_reflection PASSED                                                                                                                                       [ 50%]
+    tests/test_endpoints.py::test_vulnerable_echo_fixed FAILED                                                                                                                                            [ 62%]
+    tests/test_utils.py::test_add_simple FAILED                                                                                                                                                           [ 75%]
+    tests/test_utils.py::test_fib_basic FAILED                                                                                                                                                            [ 87%]
+    tests/test_utils.py::test_db_crud FAILED                                                                                                                                                              [100%]
+
+    ========================================================================================== short test summary info ==========================================================================================
+    FAILED tests/test_endpoints.py::test_add_endpoint - NotImplementedError
+    FAILED tests/test_endpoints.py::test_fib_endpoint - NotImplementedError
+    FAILED tests/test_endpoints.py::test_item_crud - NotImplementedError
+    FAILED tests/test_endpoints.py::test_vulnerable_echo_fixed - assert False
+    FAILED tests/test_utils.py::test_add_simple - NotImplementedError
+    FAILED tests/test_utils.py::test_fib_basic - NotImplementedError
+    FAILED tests/test_utils.py::test_db_crud - NotImplementedError
+    ======================================================================================== 7 failed, 1 passed in 0.01s ========================================================================================
+    (venv) ➜  procedures-lab (master) ✗ 
+    ```
+    > Do note that you can use `pytest -q --tb=no` to get a summary only output.
+
+1. Start the server for testing:
     ```bash
     ./run.sh
     # Visit http://127.0.0.1:8000/
@@ -126,6 +158,7 @@ This is a very short section. You will discover a vulnerable endpoint and fix it
       - *What you sent*;
       - *What happened in the browser*;
       - *Why the server was vulnerable*;
+      - See [How to submit](#how-to-submit)
     - You just hacked your own website!
 
 13. **Mitigation**
@@ -142,7 +175,7 @@ This is a very short section. You will discover a vulnerable endpoint and fix it
 
 ## Submission
 
-Submit your:
+Submit your code with:
 
 1. Implements `app/utils.py` and updates `app/server.py` (XSS mitigation).
 2. All tests in `tests/` pass (`pytest -q`).
@@ -152,6 +185,70 @@ Submit your:
 
 - [ ] `pytest -q` shows all tests passing
 - [ ] Server starts and the forms work at `http://127.0.0.1:8000/`
-- [ ] You can `PUT/GET/PATCH/DELETE` items and `POST /items` works
+- [ ] You can `PUT/GET/PATCH/DELETE` items
 - [ ] Security report (Part D) is present and explains the XSS and mitigations
 - [ ] `/vulnerable_echo` no longer reflects raw `<script>` tags (verified by `pytest -q`)
+
+### How to Submit
+
+1. Push your work to your repository:
+    ```bash
+    git add .
+    git commit -m "Your message here"
+    git push origin master
+    ```
+
+    Your repository should automatically run the *CI workflow* on every push. You can see passing/failing tests in the "Actions" tab.
+
+2. Create a new `.md` file in the directory root (can be named anything)
+    For example:
+    ```bash
+    procedures-lab/
+    ├── app
+    │   ├── __init__.py
+    │   ├── server.py
+    │   └── utils.py
+    ├── pytest.ini
+    ├── README.md
+    ├── report.md # <-- like this, for example
+    ├── requirements.txt
+    ├── run.sh
+    └── tests
+        ├── conftest.py
+        ├── test_endpoints.py
+        └── test_utils.py
+    ```
+
+3. Ensure the tests pass in CI:
+   - Open the **Actions** tab on GitHub --> latest workflow run --> ensure it shows *green checkmarks*.
+     - You can embed this in your write up like so:
+        ```md
+        ![pytest](https://github.com/<your-username>/procedures-lab/actions/workflows/pytest.yml/badge.svg)
+        ```
+   - Optionally, you can run `pytest -q --tb=no` locally and put the output somewhere to link:
+     - The output should look something like this:
+        ```bash
+        (venv) ➜  procedures-lab git:(master) ✗ pytest -v --tb=no
+        ================================================================= test session starts =================================================================
+        platform linux -- Python 3.13.7, pytest-7.4.2, pluggy-1.6.0 -- /home/mataiodoxion/School/CSP/procedures-lab/venv/bin/python
+        cachedir: .pytest_cache
+        rootdir: /home/mataiodoxion/School/CSP/procedures-lab
+        configfile: pytest.ini
+        collected 8 items                                                                                                                                     
+
+        tests/test_endpoints.py::test_add_endpoint PASSED                                                                                               [ 12%]
+        tests/test_endpoints.py::test_fib_endpoint PASSED                                                                                               [ 25%]
+        tests/test_endpoints.py::test_item_crud PASSED                                                                                                  [ 37%]
+        tests/test_endpoints.py::test_vulnerable_echo_reflection SKIPPED (Reflection test ignored because fixed test passes)                            [ 50%]
+        tests/test_endpoints.py::test_vulnerable_echo_fixed PASSED                                                                                      [ 62%]
+        tests/test_utils.py::test_add_simple PASSED                                                                                                     [ 75%]
+        tests/test_utils.py::test_fib_basic PASSED                                                                                                      [ 87%]
+        tests/test_utils.py::test_db_crud PASSED                                                                                                        [100%]
+
+        ============================================================ 7 passed, 1 skipped in 0.02s =============================================================
+        (venv) ➜  procedures-lab git:(master) ✗ 
+        ```
+        - Add this output to your writeup.
+
+4. Submit a link to your `.md` writeup on GitHub to the grading sheet!
+   - See here for an example: [report](report.md)
