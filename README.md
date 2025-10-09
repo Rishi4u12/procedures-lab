@@ -134,8 +134,8 @@ This is a very short section. You will discover a vulnerable endpoint and fix it
   
 14. **Run a test** asserting the raw `"<script>...</script>"` string no longer appears in the body returned by `/vulnerable_echo`.
     - Run `pytest -q`. If you made the right fix, then:
-      - `test_vulnerable_echo_reflection` should **FAIL**
-      - `test_vulnerable_echo_fix` should **PASS**
+      - `test_vulnerable_echo_reflection` should $${\color{red}\text{FAIL}}$$
+      - `test_vulnerable_echo_fix` should $${\color{green}\text{PASS}}$$
 
 15. Run `pytest -q` and ensure all tests pass.
 
