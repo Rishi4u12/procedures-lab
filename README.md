@@ -28,7 +28,7 @@ Work incrementally. After each small task, run the tests and try the server form
 
 
 ## Project Layout
-```py
+```bash
 py-web-assignment/
 ├─ app/
 │  ├─ server.py    # Flask endpoints (some already provided)
