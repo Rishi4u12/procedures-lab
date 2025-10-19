@@ -35,6 +35,10 @@ jobs:
     continue-on-error: true
     env:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
+    environment:
+      name: render
+      url: ${{ env.RENDER_SERVICE_URL }}
     steps:
       - name: Trigger Render deploy (Deploy Hook)
         if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
@@ -42,8 +46,17 @@ jobs:
           echo "Calling Render Deploy Hook..."
           curl -fsSL -X POST "${RENDER_DEPLOY_HOOK_URL}"
           echo "Deploy triggered. Check Render dashboard for progress."
+      - name: Publish live URL (if provided)
+        if: ${{ env.RENDER_SERVICE_URL != '' }}
+        run: |
+          echo "Live deployment: ${RENDER_SERVICE_URL}" >> "$GITHUB_STEP_SUMMARY"
       - name: Skip (no Deploy Hook secret set)
         if: ${{ env.RENDER_DEPLOY_HOOK_URL == '' }}
         run: |
           echo "RENDER_DEPLOY_HOOK_URL GitHub Secret is not set. Skipping deploy." \
                "Add this secret with the Deploy Hook URL from your Render service to enable deployments."
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deploy skipped (no Deploy Hook)." >> "$GITHUB_STEP_SUMMARY"
+          echo "Set repository secrets to enable link output:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- RENDER_DEPLOY_HOOK_URL: your Render Deploy Hook URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "- RENDER_SERVICE_URL: your live service URL (e.g., https://<service>.onrender.com)" >> "$GITHUB_STEP_SUMMARY"

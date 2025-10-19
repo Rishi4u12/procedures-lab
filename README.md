@@ -255,6 +255,9 @@ Submit your code with:
 You can deploy this Flask app for free using Render:
 
 - One-click blueprint using `render.yaml`: import the repo in Render and pick the service.
+- Or click this button:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Rishi4u12/procedures-lab)
 - Or, build/push the Docker image via GitHub Actions (GHCR) and create a Render "Docker" Web Service pointing to `ghcr.io/<your-username>/procedures-lab:latest`.
 
 CI deploy hook:
