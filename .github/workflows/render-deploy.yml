@@ -36,9 +36,10 @@ jobs:
     env:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
       RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
+      RENDER_SERVICE_URL_VAR: ${{ vars.RENDER_SERVICE_URL }}
     environment:
       name: render
-      url: ${{ env.RENDER_SERVICE_URL }}
+      url: ${{ vars.RENDER_SERVICE_URL }}
     steps:
       - name: Trigger Render deploy (Deploy Hook)
         if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
@@ -47,9 +48,10 @@ jobs:
           curl -fsSL -X POST "${RENDER_DEPLOY_HOOK_URL}"
           echo "Deploy triggered. Check Render dashboard for progress."
       - name: Publish live URL (if provided)
-        if: ${{ env.RENDER_SERVICE_URL != '' }}
+        if: ${{ env.RENDER_SERVICE_URL != '' || env.RENDER_SERVICE_URL_VAR != '' }}
         run: |
-          echo "Live deployment: ${RENDER_SERVICE_URL}" >> "$GITHUB_STEP_SUMMARY"
+          LINK="${RENDER_SERVICE_URL:-$RENDER_SERVICE_URL_VAR}"
+          echo "Live deployment: ${LINK}" >> "$GITHUB_STEP_SUMMARY"
       - name: Skip (no Deploy Hook secret set)
         if: ${{ env.RENDER_DEPLOY_HOOK_URL == '' }}
         run: |
@@ -57,6 +59,7 @@ jobs:
                "Add this secret with the Deploy Hook URL from your Render service to enable deployments."
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "Deploy skipped (no Deploy Hook)." >> "$GITHUB_STEP_SUMMARY"
-          echo "Set repository secrets to enable link output:" >> "$GITHUB_STEP_SUMMARY"
-          echo "- RENDER_DEPLOY_HOOK_URL: your Render Deploy Hook URL" >> "$GITHUB_STEP_SUMMARY"
-          echo "- RENDER_SERVICE_URL: your live service URL (e.g., https://<service>.onrender.com)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Set one of the following to enable link output:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Repository variable VARS.RERENDER_SERVICE_URL (preferred for public URL)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Repository secret RENDER_SERVICE_URL (also supported)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Optional: RENDER_DEPLOY_HOOK_URL secret to auto-trigger Render deploys from CI." >> "$GITHUB_STEP_SUMMARY"
