@@ -32,16 +32,25 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
+      - name: Guard (skip if no secret)
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "No RENDER_DEPLOY_HOOK_URL secret set; skipping deploy.";
+            exit 0;
+          fi
+        shell: bash
       - name: Trigger Render deploy (Deploy Hook)
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          if [ -z "${RENDER_DEPLOY_HOOK_URL}" ]; then
-            echo "RENDER_DEPLOY_HOOK_URL GitHub Secret is not set."
-            echo "Set it to the Deploy Hook URL from your Render service settings."
-            exit 1
-          fi
           echo "Calling Render Deploy Hook..."
           curl -fsSL -X POST "${RENDER_DEPLOY_HOOK_URL}"
           echo "Deploy triggered. Check Render dashboard for progress."
+      - name: Skip (no Deploy Hook secret set)
+        if: ${{ !secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          echo "RENDER_DEPLOY_HOOK_URL GitHub Secret is not set. Skipping deploy." \
+               "Add this secret with the Deploy Hook URL from your Render service to enable deployments."
