@@ -250,5 +250,15 @@ Submit your code with:
         ```
         - Add this output to your writeup.
 
+## Deployment (optional)
+
+You can deploy this Flask app for free using Render:
+
+- One-click blueprint using `render.yaml`: import the repo in Render and pick the service.
+- Or, build/push the Docker image via GitHub Actions (GHCR) and create a Render "Docker" Web Service pointing to `ghcr.io/<your-username>/procedures-lab:latest`.
+
+CI deploy hook:
+- A workflow `.github/workflows/render-deploy.yml` is provided. Add a GitHub Secret named `RENDER_DEPLOY_HOOK_URL` with the value from your Render service's Deploy Hook and pushes to master/main will trigger a deploy.
+
 4. Submit a link to your `.md` writeup on GitHub to the grading sheet!
    - See here for an example: [report](report.md)
